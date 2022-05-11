@@ -10,6 +10,9 @@ module.exports = {
 		'no-shadow': 0,
 		'no-catch-shadow': 0,
 		'no-mixed-spaces-and-tabs': [2, 'smart-tabs'],
+		// no-spaced-func breaks on typescript and already handled by prettier
+		'no-spaced-func': 0,
+		'react/react-in-jsx-scope': 2,
 		'import/order': [
 			2,
 			{

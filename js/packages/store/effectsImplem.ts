@@ -1,13 +1,11 @@
 import { grpc } from '@improbable-eng/grpc-web'
 import { EventEmitter } from 'events'
 import i18next from 'i18next'
-import cloneDeep from 'lodash/cloneDeep'
 import { Platform } from 'react-native'
 import RNFS from 'react-native-fs'
 
 import beapi from '@berty/api'
-import GoBridge, { GoBridgeDefaultOpts, GoBridgeOpts } from '@berty/go-bridge'
-import { GRPCError, Service } from '@berty/grpc-bridge'
+import { GRPCError, createServiceClient } from '@berty/grpc-bridge'
 import { logger } from '@berty/grpc-bridge/middleware'
 import { bridge as rpcBridge, grpcweb as rpcWeb } from '@berty/grpc-bridge/rpc'
 import { deserializeFromBase64 } from '@berty/grpc-bridge/rpc/utils'
@@ -17,6 +15,7 @@ import {
 	WelshProtocolServiceClient,
 } from '@berty/grpc-bridge/welsh-clients.gen'
 import { detectOSLanguage } from '@berty/i18n'
+import { GoBridge } from '@berty/native-modules/GoBridge'
 import { streamEventToAction as streamEventToReduxAction } from '@berty/redux/messengerActions'
 import { PersistentOptions } from '@berty/redux/reducers/persistentOptions.reducer'
 import { resetTheme } from '@berty/redux/reducers/theme.reducer'
@@ -37,21 +36,23 @@ import {
 	setStreamError,
 } from '@berty/redux/reducers/ui.reducer'
 import store, { AppDispatch, persistor } from '@berty/redux/store'
+import { accountClient, storageGet, storageRemove } from '@berty/utils/accounts/accountClient'
+import {
+	updateAccount,
+	closeAccountWithProgress,
+	refreshAccountList,
+} from '@berty/utils/accounts/accountUtils'
+import { defaultCLIArgs } from '@berty/utils/accounts/defaultCLIArgs'
+import { convertMAddr } from '@berty/utils/ipfs/convertMAddr'
+import { requestAndPersistPushToken } from '@berty/utils/notification/notif-push'
+import { GlobalPersistentOptionsKeys } from '@berty/utils/persistent-options/types'
+import { StreamInProgress } from '@berty/utils/protocol/progress.types'
 
-import { accountService, convertMAddr, storageGet, storageRemove } from './accountService'
-import { updateAccount, closeAccountWithProgress, refreshAccountList } from './accountUtils'
-import { requestAndPersistPushToken } from './services'
-import { GlobalPersistentOptionsKeys, StreamInProgress } from './types'
-import { storageKeyForAccount } from './utils'
-
-const openAccountWithProgress = async (
-	bridgeOpts: GoBridgeOpts,
-	selectedAccount: string | null,
-) => {
+const openAccountWithProgress = async (cliArgs: string[], selectedAccount: string | null) => {
 	console.log('Opening account', selectedAccount)
 	try {
-		const stream = await accountService.openAccountWithProgress({
-			args: bridgeOpts.cliArgs,
+		const stream = await accountClient.openAccountWithProgress({
+			args: cliArgs,
 			accountId: selectedAccount?.toString(),
 			sessionKind: Platform.OS === 'web' ? 'desktop-electron' : null,
 		})
@@ -175,42 +176,20 @@ export const openingDaemon = async (
 		console.warn(e)
 	}
 
-	// Apply store options
-	let bridgeOpts: GoBridgeOpts
-	try {
-		let opts: PersistentOptions | undefined
-		let store = await storageGet(storageKeyForAccount(selectedAccount.toString()))
-		if (store) {
-			opts = JSON.parse(store)
-		}
-
-		bridgeOpts = cloneDeep(GoBridgeDefaultOpts)
-
-		// set log flag
-		bridgeOpts.cliArgs = opts?.log?.format
-			? [...bridgeOpts.cliArgs!, `--log.format=${opts?.log?.format}`]
-			: [...bridgeOpts.cliArgs!, '--log.format=console']
-
-		// set log filter opt
-		bridgeOpts.logFilters = opts?.logFilters?.format
-			? opts?.logFilters?.format
-			: 'info+:bty*,-*.grpc warn+:*.grpc error+:*'
-	} catch (e) {
-		console.warn('store getPersistentOptions Failed:', e)
-		bridgeOpts = cloneDeep(GoBridgeDefaultOpts)
-	}
+	// FIXME: pass tyber host as arg
+	const cliArgs = defaultCLIArgs
 
 	let openedAccount: beapi.account.GetOpenedAccount.Reply
 
 	try {
-		openedAccount = await accountService.getOpenedAccount({})
+		openedAccount = await accountClient.getOpenedAccount({})
 
 		if (openedAccount.accountId !== selectedAccount) {
 			if (openedAccount.accountId !== '') {
-				await accountService.closeAccount({})
+				await accountClient.closeAccount({})
 			}
 
-			await openAccountWithProgress(bridgeOpts, selectedAccount)
+			await openAccountWithProgress(cliArgs, selectedAccount)
 		}
 
 		store.dispatch(setStateOpeningClients())
@@ -236,7 +215,7 @@ export const openingClients = async (
 	let messengerClient, protocolClient
 
 	if (Platform.OS === 'web') {
-		const openedAccount = await accountService?.getOpenedAccount({})
+		const openedAccount = await accountClient?.getOpenedAccount({})
 		const url = convertMAddr(openedAccount?.listeners || [])
 
 		if (url === null) {
@@ -249,22 +228,26 @@ export const openingClients = async (
 			host: url,
 		}
 
-		protocolClient = Service(
+		protocolClient = createServiceClient(
 			beapi.protocol.ProtocolService,
 			rpcWeb(opts),
 		) as unknown as WelshProtocolServiceClient
 
-		messengerClient = Service(
+		messengerClient = createServiceClient(
 			beapi.messenger.MessengerService,
 			rpcWeb(opts),
 		) as unknown as WelshMessengerServiceClient
 	} else {
-		messengerClient = Service(
+		messengerClient = createServiceClient(
 			beapi.messenger.MessengerService,
 			rpcBridge,
 			logger.create('MESSENGER'),
 		)
-		protocolClient = Service(beapi.protocol.ProtocolService, rpcBridge, logger.create('PROTOCOL'))
+		protocolClient = createServiceClient(
+			beapi.protocol.ProtocolService,
+			rpcBridge,
+			logger.create('PROTOCOL'),
+		)
 	}
 
 	if (Platform.OS === 'ios' || Platform.OS === 'android') {
@@ -461,8 +444,7 @@ export const deletingStorage = (
 
 	const f = async () => {
 		if (selectedAccount !== null) {
-			await accountService.deleteAccount({ accountId: selectedAccount })
-			await storageRemove(storageKeyForAccount(selectedAccount))
+			await accountClient.deleteAccount({ accountId: selectedAccount })
 			await refreshAccountList(embedded)
 		} else {
 			console.warn('state.selectedAccount is null and this should not occur')

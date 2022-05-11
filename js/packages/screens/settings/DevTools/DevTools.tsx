@@ -9,7 +9,6 @@ import { withInAppNotification } from 'react-native-in-app-notification'
 import { useSelector } from 'react-redux'
 
 import beapi from '@berty/api'
-import { showNeedRestartNotification } from '@berty/components/helpers'
 import { DropDownPicker, Item } from '@berty/components/shared-components/DropDownPicker'
 import {
 	ButtonSetting,
@@ -18,8 +17,7 @@ import {
 	StringOptionInput,
 } from '@berty/components/shared-components/SettingsButtons'
 import { useStyles } from '@berty/contexts/styles'
-import GoBridge from '@berty/go-bridge'
-import { Service } from '@berty/grpc-bridge'
+import { createServiceClient } from '@berty/grpc-bridge'
 import * as middleware from '@berty/grpc-bridge/middleware'
 import { bridge as rpcBridge } from '@berty/grpc-bridge/rpc'
 import {
@@ -34,6 +32,7 @@ import {
 	useRestart,
 } from '@berty/hooks'
 import { languages } from '@berty/i18n/locale/languages'
+import { GoBridge } from '@berty/native-modules/GoBridge'
 import { ScreenFC, useNavigation } from '@berty/navigation'
 import { setAccountLanguage } from '@berty/redux/reducers/accountSettings.reducer'
 import {
@@ -49,14 +48,11 @@ import {
 	setDebugMode,
 	setStreamError,
 } from '@berty/redux/reducers/ui.reducer'
-import {
-	GlobalPersistentOptionsKeys,
-	storageGet,
-	storageSet,
-	useMessengerClient,
-	useThemeColor,
-} from '@berty/store'
+import { useMessengerClient, useThemeColor } from '@berty/store'
 import messengerMethodsHooks from '@berty/store/methods'
+import { storageGet, storageSet } from '@berty/utils/accounts/accountClient'
+import { showNeedRestartNotification } from '@berty/utils/notification/notif-in-app'
+import { GlobalPersistentOptionsKeys } from '@berty/utils/persistent-options/types'
 
 //
 // DevTools
@@ -121,7 +117,11 @@ const NativeCallButton: React.FC = () => {
 	)
 	const colors = useThemeColor()
 
-	const messengerClient = Service(beapi.messenger.MessengerService, rpcBridge, messengerMiddlewares)
+	const messengerClient = createServiceClient(
+		beapi.messenger.MessengerService,
+		rpcBridge,
+		messengerMiddlewares,
+	)
 	const { t } = useTranslation()
 	let i = 0
 	return (

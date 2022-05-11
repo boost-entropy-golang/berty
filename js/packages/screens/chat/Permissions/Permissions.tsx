@@ -21,9 +21,10 @@ import {
 	setPersistentOption,
 } from '@berty/redux/reducers/persistentOptions.reducer'
 import { selectSelectedAccount } from '@berty/redux/reducers/ui.reducer'
-import rnutil from '@berty/rnutil'
-import { PermissionType } from '@berty/rnutil/permissions'
-import { accountService, useThemeColor } from '@berty/store'
+import { useThemeColor } from '@berty/store'
+import { accountClient } from '@berty/utils/accounts/accountClient'
+import rnutil from '@berty/utils/react-native'
+import { PermissionType } from '@berty/utils/react-native/permissions'
 
 const animations: Record<PermissionType, AnimatedLottieViewProps['source']> = {
 	audio: audioLottie,
@@ -88,7 +89,7 @@ export const Permissions: ScreenFC<'Chat.Permissions'> = ({ route: { params }, n
 				}
 			} else if (permissionType === PermissionType.proximity) {
 				if (selectedAccount) {
-					const currentConfig = await accountService.networkConfigGet({
+					const currentConfig = await accountClient.networkConfigGet({
 						accountId: selectedAccount,
 					})
 
@@ -108,7 +109,7 @@ export const Permissions: ScreenFC<'Chat.Permissions'> = ({ route: { params }, n
 								: beapi.account.NetworkConfig.Flag.Disabled,
 					}
 
-					await accountService.networkConfigSet({
+					await accountClient.networkConfigSet({
 						accountId: selectedAccount,
 						config: newConfig,
 					})

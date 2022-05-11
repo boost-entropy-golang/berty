@@ -11,7 +11,8 @@ import { useAppDimensions } from '@berty/contexts/app-dimensions.context'
 import { useStyles } from '@berty/contexts/styles'
 import { useCreateNewAccount } from '@berty/hooks'
 import { ScreenFC, useNavigation } from '@berty/navigation'
-import { accountService, useNotificationsInhibitor, useThemeColor } from '@berty/store'
+import { useNotificationsInhibitor, useThemeColor } from '@berty/store'
+import { accountClient } from '@berty/utils/accounts/accountClient'
 
 const DefaultModeBody: React.FC = () => {
 	const { goBack } = useNavigation()
@@ -24,7 +25,7 @@ const DefaultModeBody: React.FC = () => {
 
 	const onPress = React.useCallback(async () => {
 		// with an empty accountId the function returns default config
-		const defaultConfig = await accountService.networkConfigGet({ accountId: '' })
+		const defaultConfig = await accountClient.networkConfigGet({ accountId: '' })
 		if (defaultConfig.currentConfig) {
 			setIsPressed(true)
 			await createNewAccount(defaultConfig.currentConfig)

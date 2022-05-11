@@ -9,10 +9,10 @@ import { useDispatch, useSelector } from 'react-redux'
 
 import beapi from '@berty/api'
 import { AccountAvatar } from '@berty/components/avatars'
-import { useModal } from '@berty/components/providers/modal.provider'
 import { ButtonSettingV2, Section } from '@berty/components/shared-components'
 import { UnifiedText } from '@berty/components/shared-components/UnifiedText'
 import { useAppDimensions } from '@berty/contexts/app-dimensions.context'
+import { useModal } from '@berty/contexts/modal.context'
 import PermissionsContext from '@berty/contexts/permissions.context'
 import { useStyles } from '@berty/contexts/styles'
 import { useAccount, useAppSelector, useSyncNetworkConfigOnScreenRemoved } from '@berty/hooks'
@@ -25,16 +25,16 @@ import {
 	setNodeNetworkConfig,
 } from '@berty/redux/reducers/networkConfig.reducer'
 import { selectProtocolClient, selectSelectedAccount } from '@berty/redux/reducers/ui.reducer'
-import { checkBlePermission } from '@berty/rnutil/checkPermissions'
+import { useMountEffect, useThemeColor, useMessengerClient } from '@berty/store'
+import { accountClient } from '@berty/utils/accounts/accountClient'
+import { numberifyLong } from '@berty/utils/convert/long'
 import {
-	accountService,
-	useMountEffect,
-	useThemeColor,
-	useMessengerClient,
-	serviceTypes,
-	numberifyLong,
-} from '@berty/store'
-import { accountPushToggleState, pushAvailable, pushFilteringAvailable } from '@berty/store/push'
+	accountPushToggleState,
+	pushAvailable,
+	pushFilteringAvailable,
+} from '@berty/utils/notification/notif-push'
+import { checkBlePermission } from '@berty/utils/react-native/checkPermissions'
+import { serviceTypes } from '@berty/utils/remote-services/remote-services'
 
 import { EditProfile } from './components/EditProfile'
 
@@ -153,7 +153,7 @@ export const SettingsHome: ScreenFC<'Settings.Home'> = withInAppNotification(
 		// get network config of the account at the mount of the component
 		useMountEffect(() => {
 			const f = async () => {
-				const netConf = await accountService.networkConfigGet({
+				const netConf = await accountClient.networkConfigGet({
 					accountId: selectedAccount,
 				})
 				if (netConf.currentConfig) {

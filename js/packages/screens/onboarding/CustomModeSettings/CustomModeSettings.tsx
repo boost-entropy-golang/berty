@@ -16,11 +16,11 @@ import { useDispatch } from 'react-redux'
 import beapi from '@berty/api'
 import { AccordionAdd } from '@berty/components/modals/AccordionAdd.modal'
 import { AccordionEdit } from '@berty/components/modals/AccordionEdit.modal'
-import { useModal } from '@berty/components/providers/modal.provider'
 import { ButtonSetting } from '@berty/components/shared-components'
 import { Toggle } from '@berty/components/shared-components/Toggle'
 import { UnifiedText } from '@berty/components/shared-components/UnifiedText'
 import { useAppDimensions } from '@berty/contexts/app-dimensions.context'
+import { useModal } from '@berty/contexts/modal.context'
 import { useStyles } from '@berty/contexts/styles'
 import { useAppDispatch, useAppSelector, useCreateNewAccount } from '@berty/hooks'
 import { ScreenFC, useNavigation } from '@berty/navigation'
@@ -44,15 +44,16 @@ import {
 	toggleFromRendezvous,
 	toggleFromStaticRelay,
 } from '@berty/redux/reducers/networkConfig.reducer'
-import { checkBlePermission } from '@berty/rnutil/checkPermissions'
-import { getPermissions, PermissionType } from '@berty/rnutil/permissions'
 import {
 	Accordion,
 	AccordionAddItem,
 	AccordionItem,
 	AccordionRef,
 } from '@berty/screens/onboarding/CustomModeSettings/components/Accordion'
-import { accountService, useMountEffect, useThemeColor } from '@berty/store'
+import { useMountEffect, useThemeColor } from '@berty/store'
+import { accountClient } from '@berty/utils/accounts/accountClient'
+import { checkBlePermission } from '@berty/utils/react-native/checkPermissions'
+import { getPermissions, PermissionType } from '@berty/utils/react-native/permissions'
 
 type AccordionRefsType = {
 	relay: RefObject<AccordionRef>
@@ -672,7 +673,7 @@ export const CustomModeSettings: ScreenFC<'Onboarding.CustomModeSettings'> = () 
 	useMountEffect(() => {
 		const getNetworkConfig = async () => {
 			// with an empty accountId the function returns default config
-			const defaultConfig = await accountService.networkConfigGet({ accountId: '' })
+			const defaultConfig = await accountClient.networkConfigGet({ accountId: '' })
 			if (defaultConfig.currentConfig) {
 				dispatch(setCurrentNetworkConfig(defaultConfig?.currentConfig))
 			}

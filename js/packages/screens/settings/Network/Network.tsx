@@ -8,9 +8,9 @@ import beapi from '@berty/api'
 import { AccordionV2, AccordionAddItemV2, AccordionItemV2 } from '@berty/components/Accordion'
 import { AccordionAdd } from '@berty/components/modals/AccordionAdd.modal'
 import { AccordionEdit } from '@berty/components/modals/AccordionEdit.modal'
-import { ModalProvider, useModal } from '@berty/components/providers/modal.provider'
 import { ButtonSettingV2, Section } from '@berty/components/shared-components'
 import { useAppDimensions } from '@berty/contexts/app-dimensions.context'
+import { ModalProvider, useModal } from '@berty/contexts/modal.context'
 import { useAppDispatch, useAppSelector, useSyncNetworkConfigOnScreenRemoved } from '@berty/hooks'
 import { ScreenFC, useNavigation } from '@berty/navigation'
 import {
@@ -33,9 +33,9 @@ import {
 	toggleFromRendezvous,
 	toggleFromStaticRelay,
 } from '@berty/redux/reducers/networkConfig.reducer'
-import { checkBlePermission } from '@berty/rnutil/checkPermissions'
-import { IOSOnlyKeyboardAvoidingView } from '@berty/rnutil/keyboardAvoiding'
 import { useThemeColor } from '@berty/store'
+import { checkBlePermission } from '@berty/utils/react-native/checkPermissions'
+import { IOSOnlyKeyboardAvoidingView } from '@berty/utils/react-native/keyboardAvoiding'
 
 const Proximity: React.FC = () => {
 	const { navigate } = useNavigation()
