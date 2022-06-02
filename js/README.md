@@ -91,7 +91,6 @@ $ make web.debug
 - [iOS dev reqs](#ios-dev-requirements) **and/or** [Android dev reqs](#android-dev-requirements)
 - [Watchman](https://facebook.github.io/watchman/docs/install/) to enable live reloading
 - [Docker Desktop](https://docs.docker.com/docker-for-mac/install/)
-- The [gomobile package](https://godoc.org/golang.org/x/mobile/cmd/gomobile): `go get golang.org/x/mobile/cmd/gomobile/... && gomobile init`
 
 💡 `$GOPATH` may need to be set explicitly (usually `$HOME/go`)
 
@@ -110,9 +109,10 @@ $ make web.debug
 
 - An Android app **development environment**, e.g. [Android Studio](https://developer.android.com/studio/install)
 - **Android SDK**, with the following enabled (in Android Studio Code in `Tools --> SDK Manager`):
+  - SDK Platform "Android 11.0 (R)"
   - Android SDK Build-Tools
   - LLDB
-  - NDK
+  - NDK version 23.1.7779620 (`export ANDROID_NDK_HOME="$ANDROID_HOME/ndk/23.1.7779620"`)
   - Cmake
   - Android SDK Command-line Tools
 - A physical or virtual **Android device** (in Android Studio, `Tools --> AVD Manager`)
