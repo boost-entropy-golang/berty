@@ -30,6 +30,7 @@ const SwiperCard: React.FC<{
 	button?: {
 		text: string
 		onPress: () => void
+		accessibilityLabel?: string
 	}
 	secondButton?: {
 		text: string
@@ -47,7 +48,7 @@ const SwiperCard: React.FC<{
 			>
 				{header}
 			</UnifiedText>
-			<Card style={[{ backgroundColor: colors['main-background'], shadowColor: colors.shadow }]}>
+			<Card style={[{ backgroundColor: '#F2F2F2', shadowColor: colors.shadow }]}>
 				<View style={[padding.medium]}>
 					<UnifiedText
 						style={[
@@ -74,10 +75,17 @@ const SwiperCard: React.FC<{
 					) : null}
 					{children}
 					<View style={[margin.horizontal.large, margin.top.small]}>
-						{!!button && <PrimaryButton onPress={button.onPress}>{button.text}</PrimaryButton>}
+						{!!button && (
+							<PrimaryButton onPress={button.onPress} accessibilityLabel={button.text}>
+								{button.text}
+							</PrimaryButton>
+						)}
 						{!!secondButton && (
 							<View style={margin.top.small}>
-								<SecondaryButton onPress={secondButton.onPress}>
+								<SecondaryButton
+									onPress={secondButton.onPress}
+									accessibilityLabel={secondButton.text}
+								>
 									{secondButton.text}
 								</SecondaryButton>
 							</View>
