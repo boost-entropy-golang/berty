@@ -5,8 +5,8 @@ import { ScrollView, View } from 'react-native'
 
 import { MenuItem, ItemSection } from '@berty/components'
 import { useAppDimensions } from '@berty/contexts/app-dimensions.context'
+import { useThemeColor } from '@berty/hooks'
 import { ScreenFC, useNavigation } from '@berty/navigation'
-import { useThemeColor } from '@berty/store'
 // import { selectThemeIsDark, toggleDarkTheme } from '@berty/redux/reducers/theme.reducer'
 
 export const Appearance: ScreenFC<'Settings.Appearance'> = () => {
@@ -15,7 +15,7 @@ export const Appearance: ScreenFC<'Settings.Appearance'> = () => {
 	// const isDark = useSelector(selectThemeIsDark)
 	// const dispatch = useDispatch()
 	const { navigate } = useNavigation()
-	const { t }: { t: any } = useTranslation()
+	const { t } = useTranslation()
 
 	return (
 		<View style={{ backgroundColor: colors['secondary-background'], flex: 1 }}>

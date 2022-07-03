@@ -1,4 +1,4 @@
-import { Icon } from '@ui-kitten/components'
+import { Icon, ThemeType } from '@ui-kitten/components'
 import palette from 'google-palette'
 import React, { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -15,16 +15,13 @@ import {
 	useAppSelector,
 	useInteractionAuthor,
 	useLastConvInteraction,
+	useMessengerClient,
 	usePlaySound,
+	useThemeColor,
 } from '@berty/hooks'
 import { setActiveReplyInteraction } from '@berty/redux/reducers/chatInputs.reducer'
 import { selectInteraction } from '@berty/redux/reducers/messenger.reducer'
-import {
-	useThemeColor,
-	InteractionUserMessage,
-	ParsedInteraction,
-	useMessengerClient,
-} from '@berty/store'
+import { InteractionUserMessage, ParsedInteraction } from '@berty/utils/api'
 import { pbDateToNum } from '@berty/utils/convert/time'
 import { getMediaTypeFromMedias } from '@berty/utils/messenger/media'
 
@@ -62,10 +59,10 @@ const interactionsFilter = (inte: ParsedInteraction) =>
 const getUserMessageState = (
 	inte: ParsedInteraction,
 	members: { [key: string]: beapi.messenger.IMember | undefined } | undefined,
-	convKind: any,
+	convKind: beapi.messenger.Conversation.Type,
 	previousMessage: ParsedInteraction | undefined,
 	nextMessage: ParsedInteraction | undefined,
-	colors: any,
+	colors: ThemeType,
 ) => {
 	const sentDate = pbDateToNum(inte?.sentDate)
 
@@ -172,7 +169,7 @@ export const UserMessage: React.FC<{
 	inte: InteractionUserMessage
 	members?: { [key: string]: beapi.messenger.IMember | undefined }
 	convPK: string
-	convKind: any
+	convKind: beapi.messenger.Conversation.Type
 	previousMessage?: ParsedInteraction
 	nextMessage?: ParsedInteraction
 	replyOf?: ParsedInteraction
@@ -519,7 +516,7 @@ export const UserMessage: React.FC<{
 										{!!(!inte.medias?.length || inte.payload?.body) && (
 											<HyperlinkUserMessage
 												inte={inte}
-												msgBorderColor={msgBorderColor}
+												msgBorderColor={msgBorderColor ? msgBorderColor : undefined}
 												isFollowedMessage={isFollowedMessage}
 												msgBackgroundColor={msgBackgroundColor}
 												msgTextColor={msgTextColor}

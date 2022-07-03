@@ -5,8 +5,8 @@ import { ActivityIndicator as Spinner, StatusBar, Vibration, View } from 'react-
 
 import OnboardingWrapper from '@berty/components/onboarding/OnboardingWrapper'
 import SwiperCard from '@berty/components/onboarding/SwiperCard'
+import { useNotificationsInhibitor, useThemeColor } from '@berty/hooks'
 import { ScreenFC, useNavigation } from '@berty/navigation'
-import { useNotificationsInhibitor, useThemeColor } from '@berty/store'
 
 /**
  * FIXME: rewrite this component, the client ternaries always go through the first path
@@ -14,7 +14,7 @@ import { useNotificationsInhibitor, useThemeColor } from '@berty/store'
  */
 
 const SetupFinishedBody = () => {
-	const { t }: any = useTranslation()
+	const { t } = useTranslation()
 	const colors = useThemeColor()
 	const [isGeneration, setIsGeneration] = useState(1)
 	const [isGenerated, setIsGenerated] = useState(false)

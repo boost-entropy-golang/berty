@@ -4,6 +4,7 @@ import {
 	PersistentOptionsKeys,
 	selectPersistentOptions,
 } from '@berty/redux/reducers/persistentOptions.reducer'
+import { selectMessengerClient, selectProtocolClient } from '@berty/redux/reducers/ui.reducer'
 import { SoundKey } from '@berty/utils/sound/sound.types'
 import { playSound } from '@berty/utils/sound/sounds'
 
@@ -20,4 +21,12 @@ export const usePlaySound = () => {
 		},
 		[persistentOptions],
 	)
+}
+
+export const useMessengerClient = () => {
+	return useAppSelector(selectMessengerClient)
+}
+
+export const useProtocolClient = () => {
+	return useAppSelector(selectProtocolClient)
 }

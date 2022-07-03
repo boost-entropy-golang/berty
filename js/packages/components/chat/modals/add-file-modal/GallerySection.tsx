@@ -14,7 +14,7 @@ import RNFS from 'react-native-fs'
 
 import beapi from '@berty/api'
 import { useStyles } from '@berty/contexts/styles'
-import { useThemeColor } from '@berty/store/hooks'
+import { useThemeColor } from '@berty/hooks'
 
 import { UnifiedText } from '../../../shared-components/UnifiedText'
 import { ImageCounter } from '../../ImageCounter'
@@ -26,7 +26,7 @@ export const GallerySection: React.FC<{
 }> = ({ prepareMediaAndSend }) => {
 	const { border, padding, margin } = useStyles()
 	const colors = useThemeColor()
-	const { t }: { t: any } = useTranslation()
+	const { t } = useTranslation()
 
 	const [selectedImages, setSelectedImages] = useState<
 		(beapi.messenger.IMedia & { uri: string })[]

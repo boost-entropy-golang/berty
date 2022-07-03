@@ -7,9 +7,8 @@ import RNRestart from 'react-native-restart'
 
 import { useAppDimensions } from '@berty/contexts/app-dimensions.context'
 import { useStyles } from '@berty/contexts/styles'
-import { useAppSelector } from '@berty/hooks'
+import { useAppSelector, useThemeColor } from '@berty/hooks'
 import { selectDebugMode } from '@berty/redux/reducers/ui.reducer'
-import { useThemeColor } from '@berty/store'
 
 import AppInspector from './debug/AppInspector'
 import { UnifiedText } from './shared-components/UnifiedText'
@@ -62,7 +61,7 @@ const Body: React.FC<{ children: React.ReactElement[] }> = ({ children }) => {
 const RestartButton: React.FC = () => {
 	const { border, margin, padding, text } = useStyles()
 	const colors = useThemeColor()
-	const { t }: { t: any } = useTranslation()
+	const { t } = useTranslation()
 
 	return (
 		<TouchableOpacity
@@ -156,7 +155,7 @@ type ErrorScreenProps = {
 const WTFScreen: React.FC<ErrorScreenProps> = ({ error }) => {
 	const { margin, text } = useStyles()
 	const colors = useThemeColor()
-	const { t }: { t: any } = useTranslation()
+	const { t } = useTranslation()
 	return (
 		<ErrorScreenContainer error={error} labelTitle={t('error.labels.bug')}>
 			<View
@@ -206,7 +205,7 @@ const WTFScreen: React.FC<ErrorScreenProps> = ({ error }) => {
 const SorryScreen: React.FC<ErrorScreenProps> = ({ error }) => {
 	const { margin, text } = useStyles()
 	const colors = useThemeColor()
-	const { t }: { t: any } = useTranslation()
+	const { t } = useTranslation()
 
 	return (
 		<ErrorScreenContainer error={error} labelTitle={t('error.labels.crash')}>

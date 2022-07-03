@@ -3,7 +3,7 @@ import React from 'react'
 import { View, ViewStyle } from 'react-native'
 
 import { useStyles } from '@berty/contexts/styles'
-import { useThemeColor } from '@berty/store'
+import { useThemeColor } from '@berty/hooks'
 
 import { UnifiedText } from '../shared-components/UnifiedText'
 
@@ -72,7 +72,7 @@ export const normalizeVolumeIntensities = (intensities: Array<number>) => {
 }
 
 export const WaveForm: React.FC<{
-	intensities: any[]
+	intensities: number[]
 	duration: number | null
 	currentTime?: number
 	color?: ViewStyle['backgroundColor']

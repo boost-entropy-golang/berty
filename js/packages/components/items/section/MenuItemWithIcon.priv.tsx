@@ -1,7 +1,7 @@
 import { Icon } from '@ui-kitten/components'
 import React from 'react'
 
-import { useThemeColor } from '@berty/store'
+import { useThemeColor } from '@berty/hooks'
 
 import { IconWithTextPriv } from '../IconWithText.priv'
 import { MenuItemWithIconProps, PackProps } from '../interfaces'
@@ -21,7 +21,9 @@ export const MenuItemWithIconPriv: React.FC<
 			>
 				{props.children}
 			</IconWithTextPriv>
-			<Icon name='arrow-ios-forward' width={20} height={20} fill='#393C63' />
+			{!props.noRightArrow && (
+				<Icon name='arrow-ios-forward' width={20} height={20} fill='#393C63' />
+			)}
 		</MenuItemPriv>
 	)
 }

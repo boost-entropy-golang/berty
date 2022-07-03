@@ -4,13 +4,13 @@ import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { StatusBar, View } from 'react-native'
 
-import { TwoHorizontalButtons, PrimaryAltButton, SecondaryAltButton } from '@berty/components'
+import { HorizontalDuo, PrimaryAltButton, SecondaryAltButton } from '@berty/components'
 import OnboardingWrapper from '@berty/components/onboarding/OnboardingWrapper'
 import { UnifiedText } from '@berty/components/shared-components/UnifiedText'
 import { useAppDimensions } from '@berty/contexts/app-dimensions.context'
 import { useStyles } from '@berty/contexts/styles'
+import { useNotificationsInhibitor, useThemeColor } from '@berty/hooks'
 import { ScreenFC, useNavigation } from '@berty/navigation'
-import { useNotificationsInhibitor, useThemeColor } from '@berty/store'
 
 const DefaultModeBody: React.FC = () => {
 	const { goBack, navigate } = useNavigation()
@@ -18,7 +18,7 @@ const DefaultModeBody: React.FC = () => {
 	const { padding, border, margin, text } = useStyles()
 	const { scaleSize } = useAppDimensions()
 	const [isPressed, setIsPressed] = React.useState<boolean>(false)
-	const { t }: { t: any } = useTranslation()
+	const { t } = useTranslation()
 
 	return (
 		<View style={[{ flex: 1 }]}>
@@ -110,7 +110,7 @@ const DefaultModeBody: React.FC = () => {
 						},
 					]}
 				>
-					<TwoHorizontalButtons>
+					<HorizontalDuo>
 						<SecondaryAltButton onPress={goBack}>
 							{t('onboarding.default-mode.summary.back-button')}
 						</SecondaryAltButton>
@@ -121,7 +121,7 @@ const DefaultModeBody: React.FC = () => {
 						>
 							{t('onboarding.default-mode.summary.accept-button')}
 						</PrimaryAltButton>
-					</TwoHorizontalButtons>
+					</HorizontalDuo>
 				</View>
 			</View>
 		</View>

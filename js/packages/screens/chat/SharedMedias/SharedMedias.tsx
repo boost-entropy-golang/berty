@@ -23,13 +23,13 @@ import beapi from '@berty/api'
 import { isBertyDeepLink } from '@berty/components/chat/message/UserMessageComponents'
 import { UnifiedText } from '@berty/components/shared-components/UnifiedText'
 import { useStyles } from '@berty/contexts/styles'
-import { useConversationInteractions } from '@berty/hooks'
+import { useConversationInteractions, useMessengerClient, useThemeColor } from '@berty/hooks'
 import { ScreenFC } from '@berty/navigation'
 import { selectProtocolClient } from '@berty/redux/reducers/ui.reducer'
-import { useMessengerClient, useThemeColor, Maybe } from '@berty/store'
 import { pbDateToNum, timeFormat } from '@berty/utils/convert/time'
 import { retrieveMediaBytes } from '@berty/utils/messenger/media'
 import { getSource } from '@berty/utils/protocol/attachments'
+import { Maybe } from '@berty/utils/type/maybe'
 
 import { TabSwitch } from './components/TabSwitch'
 
@@ -118,15 +118,17 @@ export const SharedMedias: ScreenFC<'Chat.SharedMedias'> = ({
 		}
 
 		Promise.all(
-			pictures.map(async (media: any) => {
-				try {
-					const src = await getSource(protocolClient, media.cid)
-					return { ...media, uri: `data:${media.mimeType};base64,${src}` }
-				} catch (e) {
-					return console.error('failed to get picture message image:', e)
+			pictures.map(async media => {
+				if (media.cid) {
+					try {
+						const src = await getSource(protocolClient, media.cid)
+						return { ...media, uri: `data:${media.mimeType};base64,${src}` }
+					} catch (e) {
+						return console.error('failed to get picture message image:', e)
+					}
 				}
 			}),
-		).then((images: any) => setImages(images.filter(Boolean)))
+		).then(images => setImages(images.filter(Boolean)))
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [protocolClient, pictures.length])
 

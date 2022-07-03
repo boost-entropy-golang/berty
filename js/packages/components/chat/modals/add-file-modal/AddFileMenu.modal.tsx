@@ -6,8 +6,8 @@ import ImagePicker from 'react-native-image-crop-picker'
 import { RESULTS } from 'react-native-permissions'
 
 import beapi from '@berty/api'
+import { useMessengerClient, useThemeColor } from '@berty/hooks'
 import { useNavigation } from '@berty/navigation'
-import { useMessengerClient, useThemeColor } from '@berty/store'
 import { checkPermissions } from '@berty/utils/react-native/checkPermissions'
 import { getPath } from '@berty/utils/react-native/file-system'
 import { PermissionType } from '@berty/utils/react-native/permissions'
@@ -25,7 +25,7 @@ export const AddFileMenu: React.FC<{
 	sending?: boolean
 	setSending: (val: boolean) => void
 }> = ({ onClose, sending, setSending }) => {
-	const { t }: { t: any } = useTranslation()
+	const { t } = useTranslation()
 	const [activeTab, setActiveTab] = useState(TabItems.Default)
 	const [isSecurityAccessVisible, setSecurityAccessVisibility] = useState(false)
 	const client = useMessengerClient()
@@ -195,7 +195,7 @@ export const AddFileMenu: React.FC<{
 							mimeType: res.type,
 						},
 					])
-				} catch (err: any) {
+				} catch (err) {
 					if (DocumentPicker.isCancel(err)) {
 						// ignore
 					} else {

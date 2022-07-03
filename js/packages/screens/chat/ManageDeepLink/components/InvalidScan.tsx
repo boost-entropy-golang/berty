@@ -6,8 +6,8 @@ import { View, StyleSheet, TouchableOpacity } from 'react-native'
 import beapi from '@berty/api'
 import { UnifiedText } from '@berty/components/shared-components/UnifiedText'
 import { useStyles } from '@berty/contexts/styles'
+import { useThemeColor } from '@berty/hooks'
 import { useNavigation } from '@berty/navigation'
-import { useThemeColor } from '@berty/store'
 
 //
 // Scan Invalid
@@ -110,7 +110,7 @@ const InvalidScanDismissButton: React.FC = () => {
 	const { row, margin, padding } = useStyles()
 	const colors = useThemeColor()
 	const navigation = useNavigation()
-	const { t }: any = useTranslation()
+	const { t } = useTranslation()
 
 	return (
 		<View style={row.center}>
@@ -150,7 +150,7 @@ const InvalidScan: React.FC<{ type: string; error: any }> = ({ type, error }) =>
 	const [layout, setLayout] = useState<number>()
 	const { padding, border } = useStyles()
 	const colors = useThemeColor()
-	const { t }: any = useTranslation()
+	const { t } = useTranslation()
 
 	const isContactAlreadyAdded = error?.error?.errorDetails?.codes?.includes(
 		beapi.errcode.ErrCode.ErrContactRequestContactAlreadyAdded,

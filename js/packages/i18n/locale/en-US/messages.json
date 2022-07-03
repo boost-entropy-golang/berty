@@ -45,8 +45,7 @@
 				"access": {
 					"title": "Network Accessibility",
 					"relay-button": "Relay Nodes (TURN)",
-					"bootstrap-button": "Bootstrap Nodes",
-					"replication-button": "Replication Nodes"
+					"bootstrap-button": "Bootstrap Nodes"
 				},
 				"modals": {
 					"add": {
@@ -159,7 +158,9 @@
 			"accounts-button": "Accounts",
 			"network-button": "Network",
 			"bug-button": "Submit a bug",
-			"about-button": "About Berty"
+			"about-button": "About Berty",
+			"version-button": "Version: {{version}}",
+			"devtools-button": "Devtools"
 		},
 		"about": {
 			"title": "About Berty",
@@ -447,7 +448,8 @@
 				"connection-confirmed": "👋 Berty connection confirmed! 🎉",
 				"request-sent": "Request Sent ✈",
 				"incoming": "Accept this request to reply!",
-				"outgoing": "Waiting for your contact reply to connect!"
+				"outgoing": "Waiting for your contact reply to connect!",
+				"refresh-button": "Retry to send contact request"
 			},
 			"incoming-input-placeholder": "Accept the request to write here...",
 			"input-placeholder": "Type here..."

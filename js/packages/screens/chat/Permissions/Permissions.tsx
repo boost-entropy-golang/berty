@@ -14,7 +14,7 @@ import { PrimaryButton, TertiaryAltButton } from '@berty/components'
 import { UnifiedText } from '@berty/components/shared-components/UnifiedText'
 import PermissionsContext from '@berty/contexts/permissions.context'
 import { useStyles } from '@berty/contexts/styles'
-import { useAppDispatch } from '@berty/hooks'
+import { useAppDispatch, useThemeColor } from '@berty/hooks'
 import { ScreenFC } from '@berty/navigation'
 import {
 	PersistentOptionsKeys,
@@ -22,7 +22,6 @@ import {
 	setPersistentOption,
 } from '@berty/redux/reducers/persistentOptions.reducer'
 import { selectSelectedAccount } from '@berty/redux/reducers/ui.reducer'
-import { useThemeColor } from '@berty/store'
 import { accountClient } from '@berty/utils/accounts/accountClient'
 import rnutil from '@berty/utils/react-native'
 import { PermissionType } from '@berty/utils/react-native/permissions'
@@ -39,7 +38,7 @@ export const Permissions: ScreenFC<'Chat.Permissions'> = ({ route: { params }, n
 	const appState = useRef(AppState.currentState)
 	const { text, border, margin } = useStyles()
 	const colors = useThemeColor()
-	const { t }: { t: any } = useTranslation()
+	const { t } = useTranslation()
 	const persistentOptions = useSelector(selectPersistentOptions)
 	const dispatch = useAppDispatch()
 	const selectedAccount = useSelector(selectSelectedAccount)

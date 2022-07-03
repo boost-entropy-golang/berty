@@ -8,12 +8,14 @@ import {
 	Easing,
 	TextInput,
 	ScrollView,
+	ViewStyle,
+	TextStyle,
 } from 'react-native'
 
 import { Toggle } from '@berty/components'
 import { useAppDimensions } from '@berty/contexts/app-dimensions.context'
 import { useStyles } from '@berty/contexts/styles'
-import { useThemeColor } from '@berty/store/hooks'
+import { useThemeColor } from '@berty/hooks'
 
 import { UnifiedText } from './UnifiedText'
 
@@ -182,12 +184,12 @@ type SettingButtonProps = {
 	actionIconAngle?: Animated.AnimatedInterpolation | null
 	actionIconSize?: number
 	actionIconColor?: string
-	actionToggle?: any
+	actionToggle?: (value: boolean) => void
 	varToggle?: boolean
 	toggleStatus?: 'primary' | 'secondary'
 	backgroundColor?: string
-	style?: StyleProp<any>[]
-	textStyle?: StyleProp<any>[]
+	style?: StyleProp<ViewStyle>[]
+	textStyle?: StyleProp<TextStyle>[]
 	// action
 	previewValue?: string
 	previewValueColor?: string
@@ -388,6 +390,8 @@ export const ButtonSetting: React.FC<SettingButtonProps> = ({
 					)}
 				</View>
 			</View>
+			{/* TODO: delete this ASAP, it's a quick fix to support StringOptionInput */}
+			{children && <View style={[margin.left.medium]}>{children}</View>}
 		</TouchableOpacity>
 	)
 }
@@ -414,7 +418,7 @@ type FactionButtonSettingProps = {
 		stateIcon?: string
 		stateIconColor?: string
 	}
-	style?: StyleProp<any>
+	style?: StyleProp<ViewStyle>
 	disabled?: boolean
 	isDropdown?: boolean
 }
@@ -606,14 +610,14 @@ type ButtonSettingRowProps = {
 		name: string
 		icon: string
 		color: string
-		style: StyleProp<any>
+		style: StyleProp<ViewStyle>
 		onPress?: () => void
 		disabled?: boolean
 		displayComponent?: ReactNode
 	}[]
 	numberOfLines?: number
-	style?: StyleProp<any>
-	styleText?: StyleProp<any>
+	style?: StyleProp<ViewStyle>
+	styleText?: StyleProp<TextStyle>
 	isScroll?: boolean
 }
 
@@ -700,8 +704,8 @@ type ButtonSettingItem = {
 	icon?: string
 	iconSize?: number
 	iconColor?: string
-	styleContainer?: any
-	styleText?: any
+	styleContainer?: StyleProp<ViewStyle>
+	styleText?: StyleProp<TextStyle>
 	disabled?: boolean
 }
 
@@ -839,7 +843,7 @@ export const StringOptionInput: React.FC<{
 			<View style={[padding.right.small, padding.top.small]}>
 				<View
 					style={[
-						flex.tiny,
+						// flex.tiny,
 						border.radius.medium,
 						border.medium,
 						padding.horizontal.small,

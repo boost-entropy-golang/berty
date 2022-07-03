@@ -7,14 +7,18 @@ import beapi from '@berty/api'
 import { berty } from '@berty/api/root.pb'
 import { useAppDimensions } from '@berty/contexts/app-dimensions.context'
 import { useStyles } from '@berty/contexts/styles'
-import { useAppDispatch, useAppSelector, useContactSearchResults } from '@berty/hooks'
+import {
+	useAppDispatch,
+	useAppSelector,
+	useContactSearchResults,
+	useThemeColor,
+} from '@berty/hooks'
 import {
 	addMemberToInvitationList,
 	removeMemberFromInvitationListById,
 	resetInvitationList,
 	selectInvitationListMembers,
 } from '@berty/redux/reducers/groupCreationForm.reducer'
-import { useThemeColor } from '@berty/store/hooks'
 
 import { ContactAvatar } from '../avatars'
 import { MediumInput } from '../index'
@@ -71,7 +75,7 @@ const ContactItem: React.FC<ContactItemProps> = ({ contact, added, separateBar =
 				<View style={[row.item.justify]}>
 					<CheckBox
 						checked={added}
-						onChange={(isChecked: any) => {
+						onChange={isChecked => {
 							if (isChecked) {
 								dispatch(addMemberToInvitationList(contact))
 							} else {
@@ -91,13 +95,11 @@ export const ContactPicker: React.FC<ContactPickerProps> = ({ accountContacts })
 	const { scaleSize } = useAppDimensions()
 	const [searchText, setSearchText] = useState('')
 	const searchContacts = useContactSearchResults(searchText)
-	const { t }: { t: any } = useTranslation()
+	const { t } = useTranslation()
 	const members = useAppSelector(selectInvitationListMembers)
 	const dispatch = useAppDispatch()
 	let contacts = searchText.length ? searchContacts : accountContacts
-	contacts = contacts.filter(
-		(contact: any) => contact.state === beapi.messenger.Contact.State.Accepted,
-	)
+	contacts = contacts.filter(contact => contact.state === beapi.messenger.Contact.State.Accepted)
 
 	useEffect(() => {
 		dispatch(resetInvitationList())

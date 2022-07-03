@@ -5,7 +5,12 @@ import { useSelector } from 'react-redux'
 
 import OnboardingWrapper from '@berty/components/onboarding/OnboardingWrapper'
 import SwiperCard from '@berty/components/onboarding/SwiperCard'
-import { useAccountServices, useAppDispatch } from '@berty/hooks'
+import {
+	useAccountServices,
+	useAppDispatch,
+	useNotificationsInhibitor,
+	useThemeColor,
+} from '@berty/hooks'
 import { ScreenFC, useNavigation } from '@berty/navigation'
 import {
 	PersistentOptionsKeys,
@@ -13,14 +18,13 @@ import {
 	setPersistentOption,
 } from '@berty/redux/reducers/persistentOptions.reducer'
 import { selectProtocolClient } from '@berty/redux/reducers/ui.reducer'
-import { useNotificationsInhibitor, useThemeColor } from '@berty/store'
 import { servicesAuthViaDefault } from '@berty/utils/remote-services/remote-services'
 
 const ServicesAuthBody: React.FC<{ next: () => void }> = ({ next }) => {
 	const persistentOptions = useSelector(selectPersistentOptions)
 	const dispatch = useAppDispatch()
 	const accountServices = useAccountServices() || []
-	const { t }: any = useTranslation()
+	const { t } = useTranslation()
 	const { goBack } = useNavigation()
 	const protocolClient = useSelector(selectProtocolClient)
 

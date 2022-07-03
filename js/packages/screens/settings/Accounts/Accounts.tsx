@@ -12,10 +12,10 @@ import {
 	useOnBoardingAfterClosing,
 	useImportingAccountAfterClosing,
 	useSwitchAccountAfterClosing,
+	useThemeColor,
 } from '@berty/hooks'
 import { ScreenFC, useNavigation } from '@berty/navigation'
 import { selectAccounts, selectSelectedAccount } from '@berty/redux/reducers/ui.reducer'
-import { useThemeColor } from '@berty/store'
 import {
 	exportAccountToFile,
 	importAccountFromDocumentPicker,
@@ -28,7 +28,7 @@ export const Accounts: ScreenFC<'Settings.Accounts'> = withInAppNotification(
 		const { scaleSize } = useAppDimensions()
 		const colors = useThemeColor()
 		const { navigate } = useNavigation()
-		const { t }: { t: any } = useTranslation()
+		const { t } = useTranslation()
 		const selectedAccount = useSelector(selectSelectedAccount)
 		const accounts = useSelector(selectAccounts)
 		const onBoardingAfterClosing = useOnBoardingAfterClosing()

@@ -9,9 +9,8 @@ import { SecondaryButton, SmallInput } from '@berty/components'
 import { UnifiedText } from '@berty/components/shared-components/UnifiedText'
 import { useModal } from '@berty/contexts/modal.context'
 import { useStyles } from '@berty/contexts/styles'
-import { useAccount, useUpdateAccount } from '@berty/hooks'
+import { useAccount, useMessengerClient, useThemeColor, useUpdateAccount } from '@berty/hooks'
 import { selectSelectedAccount } from '@berty/redux/reducers/ui.reducer'
-import { useMessengerClient, useThemeColor } from '@berty/store'
 
 import { ImagePic } from './ImagePic'
 import { ImagePlaceholder } from './ImagePlaceholder'
@@ -68,7 +67,7 @@ const initialState: State = {
 
 export const EditMyProfile: React.FC = () => {
 	const colors = useThemeColor()
-	const { t }: any = useTranslation()
+	const { t } = useTranslation()
 	const client = useMessengerClient()
 	const selectedAccount = useSelector(selectSelectedAccount)
 	const { hide } = useModal()

@@ -17,10 +17,12 @@ import {
 	useConversationsDict,
 	useIncomingContactRequests,
 	useAllConversations,
+	useThemeColor,
+	useMessengerClient,
+	useNotificationsInhibitor,
 } from '@berty/hooks'
 import { ScreenFC } from '@berty/navigation'
 import { selectPersistentOptions } from '@berty/redux/reducers/persistentOptions.reducer'
-import { useMessengerClient, useNotificationsInhibitor, useThemeColor } from '@berty/store'
 
 import { AddBot } from './components/AddBot'
 import { Conversations } from './components/Conversations'
@@ -63,7 +65,7 @@ export const Home: ScreenFC<'Chat.Home'> = ({ navigation: { navigate } }) => {
 	const { text, opacity, flex, margin, border } = useStyles()
 	const { scaleSize, scaleHeight } = useAppDimensions()
 	const colors = useThemeColor()
-	const { t }: any = useTranslation()
+	const { t } = useTranslation()
 
 	const scrollRef = useRef<ScrollView>(null)
 	const searching = !!searchText
@@ -76,10 +78,10 @@ export const Home: ScreenFC<'Chat.Home'> = ({ navigation: { navigate } }) => {
 
 	const persistentOptions = useSelector(selectPersistentOptions)
 	const suggestions = Object.values(persistentOptions?.suggestions).filter(
-		(i: any) => i.state === 'unread',
+		index => index.state === 'unread',
 	)
 	const configurations = Object.values(persistentOptions?.configurations).filter(
-		(i: any) => i.state === 'unread',
+		index => index.state === 'unread',
 	)
 	const hasSuggestion: number = suggestions.length
 	const hasConfigurations: number = configurations.length
@@ -102,7 +104,7 @@ export const Home: ScreenFC<'Chat.Home'> = ({ navigation: { navigate } }) => {
 	const contacts = useContactsDict()
 
 	const searchContacts = React.useMemo(
-		() => (searching ? pickBy(contacts, (val: any) => searchCheck(val.displayName)) : {}),
+		() => (searching ? pickBy(contacts, val => searchCheck(val?.displayName)) : {}),
 		[contacts, searchCheck, searching],
 	)
 
