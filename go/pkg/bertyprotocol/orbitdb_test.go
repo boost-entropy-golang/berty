@@ -19,6 +19,7 @@ import (
 	"berty.tech/berty/v2/go/internal/datastoreutil"
 	"berty.tech/berty/v2/go/internal/ipfsutil"
 	"berty.tech/berty/v2/go/internal/testutil"
+	"berty.tech/berty/v2/go/pkg/protocoltypes"
 )
 
 func TestDifferentStores(t *testing.T) {
@@ -83,17 +84,21 @@ func TestDifferentStores(t *testing.T) {
 
 	assert.NotEqual(t, gA.PublicKey, gB.PublicKey)
 
-	g1a, err := odb1.OpenGroup(ctx, gA, nil)
+	g1a, err := odb1.OpenGroup(gA, nil)
 	require.NoError(t, err)
+	defer g1a.Close()
 
-	g2a, err := odb2.OpenGroup(ctx, gA, nil)
+	g2a, err := odb2.OpenGroup(gA, nil)
 	require.NoError(t, err)
+	defer g2a.Close()
 
-	g1b, err := odb1.OpenGroup(ctx, gB, nil)
+	g1b, err := odb1.OpenGroup(gB, nil)
 	require.NoError(t, err)
+	defer g1b.Close()
 
-	g2b, err := odb2.OpenGroup(ctx, gB, nil)
+	g2b, err := odb2.OpenGroup(gB, nil)
 	require.NoError(t, err)
+	defer g2b.Close()
 
 	require.NoError(t, ActivateGroupContext(ctx, g1a, nil))
 	require.NoError(t, ActivateGroupContext(ctx, g2a, nil))
@@ -144,26 +149,37 @@ func TestDifferentStores(t *testing.T) {
 	_, err = g2b.MetadataStore().SendAppMetadata(ctx, []byte("From 2 - 3"), nil)
 	require.NoError(t, err)
 
-	time.Sleep(time.Millisecond * 500)
+	{
+		var err error
+		var cc <-chan *protocoltypes.GroupMetadataEvent
+		var ops []*protocoltypes.AppMetadata
 
-	evt1, err := g1a.MetadataStore().ListEvents(ctx, nil, nil, false)
-	require.NoError(t, err)
-	ops1 := testutil.TestFilterAppMetadata(t, evt1)
+		assert.Eventually(t, func() bool {
+			cc, err = g1a.MetadataStore().ListEvents(ctx, nil, nil, false)
+			ops = testutil.TestFilterAppMetadata(t, cc)
+			return len(ops) == 2
+		}, time.Second*2, time.Millisecond*100, "have: %d, want: %d", len(ops), 2)
+		require.NoError(t, err)
 
-	evt2, err := g2a.MetadataStore().ListEvents(ctx, nil, nil, false)
-	require.NoError(t, err)
-	ops2 := testutil.TestFilterAppMetadata(t, evt2)
+		assert.Eventually(t, func() bool {
+			cc, err = g2a.MetadataStore().ListEvents(ctx, nil, nil, false)
+			ops = testutil.TestFilterAppMetadata(t, cc)
+			return len(ops) == 2
+		}, time.Second*2, time.Millisecond*100, "have: %d, want: %d", len(ops), 2)
+		require.NoError(t, err)
 
-	evt3, err := g1b.MetadataStore().ListEvents(ctx, nil, nil, false)
-	require.NoError(t, err)
-	ops3 := testutil.TestFilterAppMetadata(t, evt3)
+		assert.Eventually(t, func() bool {
+			cc, err = g1b.MetadataStore().ListEvents(ctx, nil, nil, false)
+			ops = testutil.TestFilterAppMetadata(t, cc)
+			return len(ops) == 4
+		}, time.Second*2, time.Millisecond*100, "have: %d, want: %d", len(ops), 5)
+		require.NoError(t, err)
 
-	evt4, err := g2b.MetadataStore().ListEvents(ctx, nil, nil, false)
-	require.NoError(t, err)
-	ops4 := testutil.TestFilterAppMetadata(t, evt4)
-
-	assert.Equal(t, 2, len(ops1))
-	assert.Equal(t, 2, len(ops2))
-	assert.Equal(t, 4, len(ops3))
-	assert.Equal(t, 4, len(ops4))
+		assert.Eventually(t, func() bool {
+			cc, err = g2b.MetadataStore().ListEvents(ctx, nil, nil, false)
+			ops = testutil.TestFilterAppMetadata(t, cc)
+			return len(ops) == 4
+		}, time.Second*2, time.Millisecond*100, "have: %d, want: %d", len(ops), 4)
+		require.NoError(t, err)
+	}
 }
