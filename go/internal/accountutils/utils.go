@@ -11,7 +11,6 @@ import (
 	"strings"
 	"time"
 
-	sqlite "github.com/berty/gorm-sqlcipher"
 	"github.com/gogo/protobuf/proto"
 	"github.com/ipfs/go-datastore"
 	sync_ds "github.com/ipfs/go-datastore/sync"
@@ -20,6 +19,7 @@ import (
 	"gorm.io/gorm"
 	"moul.io/zapgorm2"
 
+	sqlite "berty.tech/berty/v2/go/internal/gorm-sqlcipher"
 	"berty.tech/berty/v2/go/pkg/accounttypes"
 	"berty.tech/berty/v2/go/pkg/errcode"
 	encrepo "berty.tech/go-ipfs-repo-encrypted"
@@ -332,10 +332,14 @@ func GetGormDBForPath(dbPath string, key []byte, salt []byte, logger *zap.Logger
 		return nil, nil, errcode.TODO.Wrap(err)
 	}
 
+	sqlDB, err := db.DB()
+	if err != nil {
+		return nil, nil, fmt.Errorf("unable to gorm underlying db: %w", err)
+	}
+
+	sqlDB.SetMaxOpenConns(1)
+
 	return db, func() {
-		sqlDB, _ := db.DB()
-		if sqlDB != nil {
-			sqlDB.Close()
-		}
+		_ = sqlDB.Close()
 	}, nil
 }

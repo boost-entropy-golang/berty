@@ -5,11 +5,11 @@ import (
 	"testing"
 	"time"
 
-	sqlite "github.com/berty/gorm-sqlcipher"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 	"moul.io/zapgorm2"
 
+	sqlite "berty.tech/berty/v2/go/internal/gorm-sqlcipher"
 	"berty.tech/weshnet/pkg/testutil"
 )
 
@@ -67,6 +67,8 @@ func GetInMemoryTestDB(t testing.TB, opts ...GetInMemoryTestDBOpts) (*DBWrapper,
 	if err != nil {
 		t.Fatal(err)
 	}
+
+	d.SetMaxOpenConns(1)
 
 	return wrappedDB, db, func() {
 		_ = d.Close()
